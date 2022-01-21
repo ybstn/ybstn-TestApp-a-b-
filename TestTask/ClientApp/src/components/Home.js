@@ -2,6 +2,7 @@
 import { Row, Col, Button, ButtonGroup } from 'reactstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { HistogramChart } from './HistogramChart';
+import { trackPromise } from "react-promise-tracker";
 const devSite = "localhost:5000";
 //const devSite = "pchlmap.1gb.ru";
 
@@ -24,7 +25,7 @@ export class Home extends Component {
         this.loadData();
     }
     async loadData() {
-        const response = await fetch('Home');
+        const response = await trackPromise(fetch('Home'));
         const data = await response.json();
         this.setState({ users: data, loading: false });
     }
@@ -37,7 +38,7 @@ export class Home extends Component {
     async calculate(users) {
         if (users) {
             var url = new URL("http://" + devSite + "/Home/Calculate");
-            fetch(url, {
+            trackPromise(fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(users),
                 headers: {
@@ -47,7 +48,7 @@ export class Home extends Component {
                 this.setState({ rollingRetentionXday: data.rollingRetentionXday, lifeTimeData: this.ConvertCalculatedData(data) });
             }).then(() => {
                 this.loadData();
-            });
+            }));
         }
     }
     ConvertCalculatedData(_data) {
@@ -73,33 +74,33 @@ export class Home extends Component {
         if (this.state.NewActivityField != "" && this.state.NewRegistrationField != "") {
             let data = { id: "new", RegistrationDate: this.state.NewRegistrationField, LastActivity: this.state.NewActivityField };
             var url = new URL("http://" + devSite + "/home/AddUser");
-            fetch(url, {
+            trackPromise(fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(() => { this.loadData(); });
+            }).then(() => { this.loadData(); }));
         }
     }
     deleteUser(id) {
         let data = { id: "new", RegistrationDate: this.state.NewActivityField, LastActivity: this.state.NewRegistrationField };
         var url = new URL("http://" + devSite + "/Home");
         url.search = new URLSearchParams({ id: id });
-        fetch(url, {
+        trackPromise(fetch(url, {
             method: 'DELETE',
             body: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(() => { this.loadData(); });
+        }).then(() => { this.loadData(); }));
 
     }
     onSubmit(e, users) {
         e.preventDefault();
         if (users) {
             var url = new URL("http://" + devSite + "/Home");
-            fetch(url, {
+            trackPromise(fetch(url, {
                 method: 'POST',
                 body: JSON.stringify(users),
                 headers: {
@@ -107,7 +108,7 @@ export class Home extends Component {
                 }
             }).then(() => {
                 this.loadData();
-            });
+            }));
         }
     }
     render() {
