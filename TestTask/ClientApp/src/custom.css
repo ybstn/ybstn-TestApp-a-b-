@@ -1,0 +1,43 @@
+﻿/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #E01A76;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
+body {
+    font-family: 'Ubuntu', sans-serif;
+    background-color: #f8f9fa;
+}
+.AddUserBtn {
+    background-image: url("Images/Group 21.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 66%;
+}
+.DeleteUserBtn {
+    background-image: url("Images/Delete.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 56%;
+}
+.RoundedButton {
+    border-radius: 9px !important;
+    min-width: 30vw;
+}
+.RoundedInput {
+    border-radius: 19px !important;
+}
+.DisabledInput {
+    user-select: none;
+    pointer-events: none;
+    cursor: pointer;
+    font-size: small;
+}

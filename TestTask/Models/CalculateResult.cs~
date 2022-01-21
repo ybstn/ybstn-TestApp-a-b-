@@ -1,0 +1,12 @@
+﻿using System.Collections.Generic;
+
+namespace TestTask.Models
+{
+	public class CalculateResult
+	{
+		public float RollingRetentionXday { get; set; }
+
+		public IEnumerable<LifeTimeData> lifeTimeData { get; set; }
+	}
+}
+

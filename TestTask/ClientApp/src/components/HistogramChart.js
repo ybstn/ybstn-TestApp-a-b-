@@ -1,0 +1,32 @@
+﻿import React, { Component } from 'react'
+import { Chart } from 'react-google-charts'
+
+const chartOptions = {
+    title: 'Распределение длительностей жизней пользователей',
+    legend: { position: 'none' },
+    colors: ['#32BFEB'],
+    interpolateNulls: false
+}
+
+export class HistogramChart extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            histogramData: this.props.data
+        };
+    }
+    render() {
+        return (
+            <div className="container mt-1">
+                <Chart
+                    chartType="Histogram"
+                    loader={<div>Loading Chart</div>}
+                    data={this.props.data}
+                    options={chartOptions}
+                    rootProps={{ 'data-testid': '5' }}
+                />
+            </div>
+        )
+    }
+}
+

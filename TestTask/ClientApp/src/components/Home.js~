@@ -1,0 +1,196 @@
+﻿import React, { Component } from 'react';
+import { Row, Col, Button, ButtonGroup } from 'reactstrap';
+import { Modal, ModalHeader } from 'reactstrap';
+import { Form, FormGroup, Label, Input } from 'reactstrap';
+import { HistogramChart } from './HistogramChart';
+//const devSite = "localhost:5000";
+const devSite = "pchlmap.1gb.ru";
+
+export class Home extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            users: [], loading: true, lifeTimeData: [[]], rollingRetentionXday: "", NewRegistrationField: "", NewActivityField: ""
+        };
+        this.onFieldChange = this.onFieldChange.bind(this);
+        this.ConvertCalculatedData = this.ConvertCalculatedData.bind(this);
+        this.onNewUserRegistrationChange = this.onNewUserRegistrationChange.bind(this);
+        this.onNewUserActivityChange = this.onNewUserActivityChange.bind(this);
+        this.addUser = this.addUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadData();
+    }
+    async loadData() {
+        const response = await fetch('Home');
+        const data = await response.json();
+        this.setState({ users: data, loading: false });
+    }
+    onFieldChange(e, id) {
+        let FieldName = e.target.name;
+        let FieldValue = e.target.value;
+        this.setState(prevState => ({ users: prevState.users.map(x => x.id === id ? { ...x, [FieldName]: FieldValue } : x) }));
+    }
+    async calculate(users) {
+        if (users) {
+            var url = new URL("http://" + devSite + "/Home/Calculate");
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(users),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(data => {
+                this.setState({ rollingRetentionXday: data.rollingRetentionXday, lifeTimeData: this.ConvertCalculatedData(data) });
+            }).then(() => {
+                this.loadData();
+            });
+        }
+    }
+    ConvertCalculatedData(_data) {
+        let datesData = _data.lifeTimeData;
+        //alert(JSON.stringify(datesData));
+        //let objKeys = Object.keys(datesData);
+        //let fieldname_One = objKeys[0];
+        //let fieldname_Two = objKeys[1]; 
+        let result = [['id', 'life time']];
+        datesData.forEach(el => {
+            result.push([el.id, el.lifeTime]);
+        });
+        return result;
+
+    }
+    onNewUserRegistrationChange(e) {
+        this.setState({ NewRegistrationField: e.target.value });
+    }
+    onNewUserActivityChange(e) {
+        this.setState({ NewActivityField: e.target.value });
+    }
+    addUser() {
+        if (this.state.NewActivityField != "" && this.state.NewRegistrationField != "") {
+            let data = { id: "new", RegistrationDate: this.state.NewActivityField, LastActivity: this.state.NewRegistrationField };
+            var url = new URL("http://" + devSite + "/home/AddUser");
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => { this.loadData(); });
+        }
+    }
+    deleteUser(id) {
+        let data = { id: "new", RegistrationDate: this.state.NewActivityField, LastActivity: this.state.NewRegistrationField };
+        var url = new URL("http://" + devSite + "/Home");
+        url.search = new URLSearchParams({ id: id });
+        fetch(url, {
+            method: 'DELETE',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(() => { this.loadData(); });
+
+    }
+    onSubmit(users) {
+        if (users) {
+            var url = new URL("http://" + devSite + "/Home");
+            fetch(url, {
+                method: 'POST',
+                body: JSON.stringify(users),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => { this.loadData(); });
+        }
+    }
+    render() {
+        var users = this.state.users;
+        var showCalculates = this.state.rollingRetentionXday == "" ? "d-none" : "d-flex";
+        var btnCalculateColor = this.state.rollingRetentionXday == "" ? "btn-info" : "btn-warning"
+        return (
+            <div className="mb-3">
+                <Form onSubmit={() => { this.onSubmit(users) }}>
+                    <table className='table table-striped' aria-labelledby="tabelLabel">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>ID</th>
+                                <th>Date Registration</th>
+                                <th>Date Last Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map(user =>
+                                <tr key={user.id}>
+                                    <td>
+                                        <input type="button" className="btn btn-light modal-btn" value="-"
+                                            onClick={() => this.deleteUser(user.id)} />
+                                    </td>
+                                    <td>{user.id}</td>
+                                    <td>
+
+                                        <Input type="date"
+                                            className={""}
+                                            defaultValue={user.registrationDate}
+                                            onChange={(e) => this.onFieldChange(e, user.id)}
+                                            name="registrationDate"
+                                            required
+                                        />
+                                    </td>
+                                    <td>
+                                        <Input type="date"
+                                            className={""}
+                                            defaultValue={user.lastActivity}
+                                            onChange={(e) => this.onFieldChange(e, user.id)}
+                                            name="lastActivity"
+                                            required
+                                        />
+                                    </td>
+                                </tr>
+                            )}
+                            <tr>
+
+                                <td>
+                                    <input type="button" className="btn btn-light modal-btn" value="+" onClick={this.addUser} />
+                                </td>
+                                <td></td>
+                                <td>
+                                    <Input type="text"
+                                        className={""}
+                                        id="RegInput"
+                                        placeholder="Дата регистрации"
+                                        onChange={this.onNewUserRegistrationChange} />
+                                </td>
+                                <td>
+                                    <Input type="text"
+                                        className={""}
+                                        id="RegInput"
+                                        placeholder="Дата активности"
+                                        onChange={this.onNewUserActivityChange} />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div className="row">
+                        <div className="btn-group">
+                            <input type="submit" className="btn btn-info modal-btn me-1" value="Сохранить" />
+                            <input type="button" className={"btn modal-btn ms-1 " + btnCalculateColor} value="Calculate" onClick={() => this.calculate(users)} />
+                        </div>
+                    </div>
+                </Form>
+
+
+                <div className={"row mt-3 border rounded " + showCalculates}>
+                    <div className="col-12 d-flex justify-content-center">Rolling Retention 7 day = {this.state.rollingRetentionXday}%</div>
+                    <HistogramChart className="col-12" data={this.state.lifeTimeData} />
+                </div>
+            </div>
+        );
+    }
+
+
+}

@@ -1,0 +1,39 @@
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using TestTask.Models;
+
+namespace TestTask.Data
+{
+	public class UsersDbContext : DbContext
+	{
+		private readonly IWebHostEnvironment _env;
+
+		public DbSet<User> Users { get; set; }
+
+		public UsersDbContext(IWebHostEnvironment env)
+		{
+			_env = env;
+			bool flag = Database.EnsureCreated();
+		}
+
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		{
+			string text = _env.ContentRootPath + "/Data/";
+			string connectionString = "server=mysql94.1gb.ru;database=gb_ybstnbd;user=gb_ybstnbd;password=SCrJ9-36mMgK;";
+			ServerVersion serverVersion = ServerVersion.AutoDetect(connectionString);
+			optionsBuilder.UseMySql(connectionString, serverVersion);
+		}
+
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
+		{
+			base.OnModelCreating(modelBuilder);
+			modelBuilder.Entity(delegate (EntityTypeBuilder<User> entity)
+			{
+				entity.HasKey((User e) => e.id);
+				entity.Property((User e) => e.RegistrationDate).IsRequired();
+				entity.Property((User e) => e.LastActivity).IsRequired();
+			});
+		}
+	}
+}
