@@ -23,6 +23,7 @@ export class Home extends Component {
 
     componentDidMount() {
         this.loadData();
+
     }
     async loadData() {
         const response = await trackPromise(fetch('Home'));
