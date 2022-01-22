@@ -16,6 +16,7 @@ export class HistogramChart extends Component {
             legend: { position: 'none' },
             colors: ['#32BFEB'],
             interpolateNulls: false,
+            trendlines: { 0: {} },
             vAxis: {
                 scaleType: this.props.AxisType,
                 ticks: [0, 1, 2, 3, 4, 5]
