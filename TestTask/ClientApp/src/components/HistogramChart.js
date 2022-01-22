@@ -1,12 +1,7 @@
 ﻿import React, { Component } from 'react'
 import { Chart } from 'react-google-charts'
 
-const chartOptions = {
-    title: 'Распределение длительностей жизней пользователей',
-    legend: { position: 'none' },
-    colors: ['#32BFEB'],
-    interpolateNulls: false
-}
+
 
 export class HistogramChart extends Component {
     constructor(props) {
@@ -16,6 +11,16 @@ export class HistogramChart extends Component {
         };
     }
     render() {
+        var chartOptions = {
+            title: 'Распределение длительностей жизней пользователей',
+            legend: { position: 'none' },
+            colors: ['#32BFEB'],
+            interpolateNulls: false,
+            vAxis: {
+                scaleType: this.props.AxisType,
+                ticks: [0, 1, 2, 3, 4, 5]
+            }
+        }
         return (
             <div className="container mt-1">
                 <Chart

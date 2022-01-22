@@ -3,14 +3,14 @@ import { Row, Col, Button, ButtonGroup } from 'reactstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
 import { HistogramChart } from './HistogramChart';
 import { trackPromise } from "react-promise-tracker";
-const devSite = "localhost:5000";
-//const devSite = "pchlmap.1gb.ru";
+//const devSite = "localhost:5000";
+const devSite = "pchlmap.1gb.ru";
 
 export class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            users: [], loading: true, lifeTimeData: [[]], rollingRetentionXday: "", NewRegistrationField: "", NewActivityField: ""
+            users: [], loading: true, lifeTimeData: [[]], rollingRetentionXday: "", NewRegistrationField: "", NewActivityField: "", AxisType:"linear"
         };
         this.onFieldChange = this.onFieldChange.bind(this);
         this.ConvertCalculatedData = this.ConvertCalculatedData.bind(this);
@@ -193,7 +193,9 @@ export class Home extends Component {
 
                 <div className={"row mt-3 border rounded " + showCalculates}>
                     <div className="col-12 d-flex justify-content-center">Rolling Retention 7 day = {this.state.rollingRetentionXday}%</div>
-                    <HistogramChart className="col-12" data={this.state.lifeTimeData} />
+                    <HistogramChart className="col-12" data={this.state.lifeTimeData} AxisType={this.state.AxisType} />
+                    <input type="button" className="btn btn-dark  RoundedButton mt-1" onClick={() => this.setState({ AxisType: this.state.AxisType === "log" ? "linear" : "log" })}
+                        value={"SWITCH V-AXIS TYPE TO " + (this.state.AxisType === "log" ? "'LINEAR'" : "'LOG'")} />
                 </div>
             </div>
         );
