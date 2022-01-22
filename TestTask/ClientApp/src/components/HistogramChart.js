@@ -13,11 +13,19 @@ export class HistogramChart extends Component {
     render() {
         var chartOptions = {
             title: 'Распределение длительностей жизней пользователей',
-            legend: { position: 'none' },
+            legend: { position: 'bottom'},
             colors: ['#32BFEB'],
             interpolateNulls: false,
-            trendlines: { 0: {} },
+            trendlines: {
+                0: {
+                    type: 'exponential',
+                    showR2: true,
+                    visibleInLegend: false
+                }
+            },
+            hAxis: { title: 'Life Time' },
             vAxis: {
+                title: 'Users count',
                 scaleType: this.props.AxisType,
                 ticks: [0, 1, 2, 3, 4, 5]
             }

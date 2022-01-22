@@ -58,7 +58,7 @@ export class Home extends Component {
         //let objKeys = Object.keys(datesData);
         //let fieldname_One = objKeys[0];
         //let fieldname_Two = objKeys[1]; 
-        let result = [['id', 'life time']];
+        let result = [["'user id'", "'life time'"]];
         datesData.forEach(el => {
             result.push([el.id, el.lifeTime]);
         });
